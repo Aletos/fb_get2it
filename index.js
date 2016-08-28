@@ -47,8 +47,7 @@ app.post('/webhook/', function (req, res) {
     res.sendStatus(200)
 })
 
-function sendTextMessage(sender, text) {
-    let messageData = { text:text }
+function sendMessageData(sender, messageData) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
@@ -66,6 +65,11 @@ function sendTextMessage(sender, text) {
     })
 }
 
+function sendTextMessage(sender, text) {
+    let messageData = { text:text }
+    sendMessageData(sender, messageData)
+}
+
 function sendPendingRecommendation(sender) {
     let messageData = {
         "attachment": {
@@ -78,36 +82,18 @@ function sendPendingRecommendation(sender) {
                     "image_url": "http://cdn.thefiscaltimes.com/sites/default/files/02212014_Kevin_Spacey_House_of_Cards_Netflix.jpg",
                     "buttons": [{
                         "type": "postback",
-                        "title": "Watched It!",
+                        "title": "Watched It",
                         "payload": "completed",
                     }, {
                         "type": "postback",
-                        "title": "What Else Do You Got?",
-                        "payload": "dismiss",
-                    }, {
-                        "type": "postback",
-                        "title": "Not Interesting At All",
+                        "title": "",
                         "payload": "dismiss",
                     }],
                 }]
             }
         }
     }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
+    sendMessageData(sender, messageData)
 }
 
 function sendGenericMessage(sender) {
@@ -142,21 +128,7 @@ function sendGenericMessage(sender) {
             }
         }
     }
-    request({
-        url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token:token},
-        method: 'POST',
-        json: {
-            recipient: {id:sender},
-            message: messageData,
-        }
-    }, function(error, response, body) {
-        if (error) {
-            console.log('Error sending messages: ', error)
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error)
-        }
-    })
+    sendMessageData(sender, messageData)
 }
 
 const token = process.env.FB_PAGE_TOKEN
