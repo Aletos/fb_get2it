@@ -32,13 +32,16 @@ app.post('/webhook/', function (req, res) {
       let event = req.body.entry[0].messaging[i]
       let sender = event.sender.id
       if (event.message && event.message.text && event.message.text === "Generic") {
-        sendGenericMessage(sender)
+        let text = event.message.text;
+        if (text === "Generic") {
+            sendGenericMessage(sender)
+        } else {
+            // No valid command so just show a recommendation.
+            sendPendingRecommendation(sender)
+        }
       } else if (event.postback) {
         let text = JSON.stringify(event.postback)
         sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-      } else {
-        // No valid command so just show a recommendation.
-        sendPendingRecommendation(sender)
       }
     }
     res.sendStatus(200)
