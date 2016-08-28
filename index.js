@@ -40,13 +40,13 @@ app.post('/webhook/', function (req, res) {
             sendPendingRecommendation(sender)
         }
       } else if (event.postback) {
-        let text = JSON.stringify(event.postback)
-        if (text.payload === "another") {
+        if (event.postback.payload === "another") {
             sendPendingRecommendation(sender)
-        } else if (text.payload === "completed") {
+        } else if (event.postback.payload === "completed") {
             sendTextMessage(sender, "Cheers! Here is something else you should check out")
             sendPendingRecommendation(sender)
         } else {
+            let text = JSON.stringify(event.postback)
             sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
         }
       }
