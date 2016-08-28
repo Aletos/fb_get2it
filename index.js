@@ -26,7 +26,7 @@ app.get('/webhook/', function (req, res) {
     res.send('Error, wrong token')
 })
 
- app.post('/webhook/', function (req, res) {
+app.post('/webhook/', function (req, res) {
     let messaging_events = req.body.entry[0].messaging
     for (let i = 0; i < messaging_events.length; i++) {
       let event = req.body.entry[0].messaging[i]
@@ -35,21 +35,64 @@ app.get('/webhook/', function (req, res) {
         let text = event.message.text
         if (text === 'Generic') {
             sendGenericMessage(sender)
-            continue
         }
         sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
-      }
-      if (event.postback) {
+      } else if (event.postback) {
         let text = JSON.stringify(event.postback)
         sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
-        continue
+      } else {
+        // No valid command so just show a recommendation.
+        sendPendingRecommendation(sender)
       }
     }
     res.sendStatus(200)
-  })
+})
 
 function sendTextMessage(sender, text) {
     let messageData = { text:text }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function sendPendingRecommendation(sender) {
+    let messageData = {
+        "attachment": {
+            "type": "template",
+            "payload": {
+                "template_type": "generic",
+                "elements": [{
+                    "title": "Watch House of Cards",
+                    "subtitle": "Recommended by Ryan and Darek",
+                    "image_url": "http://cdn.thefiscaltimes.com/sites/default/files/02212014_Kevin_Spacey_House_of_Cards_Netflix.jpg",
+                    "buttons": [{
+                        "type": "complete",
+                        "title": "Watched It!"
+                        "payload": "Watched House of Cards"
+                    }, {
+                        "type": "another",
+                        "title": "What Else Do You Got?",
+                    } {
+                        "type": "dismiss",
+                        "title": "Not Interesting At All",
+                        "payload": "Dismissed House of Cards",
+                    }],
+                }]
+            }
+        }
+    }
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
@@ -116,7 +159,7 @@ function sendGenericMessage(sender) {
     })
 }
 
-const token = process.env.FB_PAGE_TOKEN 
+const token = process.env.FB_PAGE_TOKEN
 
 // Spin up the server
 app.listen(app.get('port'), function() {
