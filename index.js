@@ -86,7 +86,7 @@ function sendPendingRecommendation(sender) {
                         "payload": "completed",
                     }, {
                         "type": "postback",
-                        "title": "",
+                        "title": "Something Else",
                         "payload": "dismiss",
                     }],
                 }]
