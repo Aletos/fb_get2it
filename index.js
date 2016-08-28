@@ -41,7 +41,14 @@ app.post('/webhook/', function (req, res) {
         }
       } else if (event.postback) {
         let text = JSON.stringify(event.postback)
-        sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+        if (text.payload === "another") {
+            sendPendingRecommendation(sender)
+        } else if (text.payload === "completed") {
+            sendTextMessage(sender, "Cheers! Here is something else you should check out")
+            sendPendingRecommendation(sender)
+        } else {
+            sendTextMessage(sender, "Postback received: "+text.substring(0, 200), token)
+        }
       }
     }
     res.sendStatus(200)
@@ -87,7 +94,7 @@ function sendPendingRecommendation(sender) {
                     }, {
                         "type": "postback",
                         "title": "Something Else",
-                        "payload": "dismiss",
+                        "payload": "another",
                     }],
                 }]
             }
