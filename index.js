@@ -76,23 +76,15 @@ function sendPendingRecommendation(sender) {
                     "buttons": [{
                         "type": "postback",
                         "title": "Watched It!",
-                        "payload": {
-                            "action": "completed",
-                            "message": "Watched House of Cards",
-                        },
+                        "payload": "completed",
                     }, {
                         "type": "postback",
                         "title": "What Else Do You Got?",
-                        "payload": {
-                            "action": "another",
-                        }
+                        "payload": "dismiss",
                     }, {
                         "type": "postback",
                         "title": "Not Interesting At All",
-                        "payload": {
-                            "action": "dismiss",
-                            "message": "Dismissed House of Cards"
-                        }
+                        "payload": "dismiss",
                     }],
                 }]
             }
