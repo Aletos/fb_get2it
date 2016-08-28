@@ -74,16 +74,25 @@ function sendPendingRecommendation(sender) {
                     "subtitle": "Recommended by Ryan and Darek",
                     "image_url": "http://cdn.thefiscaltimes.com/sites/default/files/02212014_Kevin_Spacey_House_of_Cards_Netflix.jpg",
                     "buttons": [{
-                        "type": "complete",
+                        "type": "postback",
                         "title": "Watched It!",
-                        "payload": "Watched House of Cards"
+                        "payload": {
+                            "action": "completed",
+                            "message": "Watched House of Cards",
+                        },
                     }, {
-                        "type": "another",
+                        "type": "postback",
                         "title": "What Else Do You Got?",
+                        "payload": {
+                            "action": "another",
+                        }
                     }, {
-                        "type": "dismiss",
+                        "type": "postback",
                         "title": "Not Interesting At All",
-                        "payload": "Dismissed House of Cards",
+                        "payload": {
+                            "action": "dismiss",
+                            "message": "Dismissed House of Cards"
+                        }
                     }],
                 }]
             }
