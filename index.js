@@ -32,7 +32,6 @@ app.post('/webhook/', function (req, res) {
       let event = req.body.entry[0].messaging[i]
       let sender = event.sender.id
       if (event.message && event.message.text && event.message.text === "Generic") {
-        let text = event.message.text
         sendGenericMessage(sender)
       } else if (event.postback) {
         let text = JSON.stringify(event.postback)
@@ -76,12 +75,12 @@ function sendPendingRecommendation(sender) {
                     "image_url": "http://cdn.thefiscaltimes.com/sites/default/files/02212014_Kevin_Spacey_House_of_Cards_Netflix.jpg",
                     "buttons": [{
                         "type": "complete",
-                        "title": "Watched It!"
+                        "title": "Watched It!",
                         "payload": "Watched House of Cards"
                     }, {
                         "type": "another",
                         "title": "What Else Do You Got?",
-                    } {
+                    }, {
                         "type": "dismiss",
                         "title": "Not Interesting At All",
                         "payload": "Dismissed House of Cards",
